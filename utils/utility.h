@@ -4,7 +4,7 @@
 #include <iostream>
 #ifdef __linux__
 #include <unistd.h>
-#elif __WIN32
+#else
 #include <direct.h>
 #endif
 #include <exception>
@@ -62,7 +62,7 @@ public:
         const int BUFFER_SIZE = 256;
         char buffer[BUFFER_SIZE];
         std::string output = "";
-        FILE *pipe = popen(command.data(), "r");
+        FILE *pipe = _popen(command.data(), "r");
 
         if (!pipe)
             return "Unknown error";
@@ -72,7 +72,7 @@ public:
                 output += buffer;
         }
 
-        pclose(pipe);
+        _pclose(pipe);
 
         return output;
     }

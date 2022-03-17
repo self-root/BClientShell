@@ -2,7 +2,7 @@
 cpp := -std=c++2a
 
 client: main.o client.o
-	g++ $(cpp) main.o client.o -o client -lpthread
+	g++ $(cpp) main.o client.o -o client -lpthread -lws2_32
 
 main.o: main.cpp
 	g++ $(cpp) -c main.cpp

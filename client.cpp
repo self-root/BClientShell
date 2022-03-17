@@ -54,6 +54,7 @@ void Client::handleReading(const boost::system::error_code &er, std::size_t data
     else
     {
         std::cout << "Some other error...\n";
+        exit(1);
     }
     receiveData();
 }
