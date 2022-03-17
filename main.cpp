@@ -16,7 +16,7 @@ int main()
         boost::asio::io_context context;
         Client client(context);
 
-        client.startConnection("23.254.225.170", 9003);
+        client.startConnection("127.0.0.1", 9003);
 
         context.run();
     }
