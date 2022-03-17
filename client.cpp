@@ -49,6 +49,7 @@ void Client::handleReading(const boost::system::error_code &er, std::size_t data
     else if(er == boost::asio::error::eof)
     {
         std::cerr << "ERROR: " << er.message() << std::endl;
+        exit(1);
     }
 
     else
@@ -102,15 +103,6 @@ void Client::handleBinData(const std::vector<uint8_t> &binaryData_)
     }
 }
 
-void Client::handleWrite(const boost::system::error_code &error, std::size_t byte_)
-{
-    if (!error)
-            std::cout << "Sent " << byte_ << " bytes" << std::endl;
-
-        else
-            std::cout << "ERROR while sending file: " << error.message() << "\n" << error.category().name() << std::endl;
-}
-
 void Client::sendResponse(std::string_view response)
 {
     json jResponse;
@@ -119,15 +111,7 @@ void Client::sendResponse(std::string_view response)
 
     std::vector<uint8_t> toSend = json::to_bson(jResponse);
     std::cout << "Sending: " << toSend.size() <<" Bytes"<< std::endl;
-
-    boost::asio::async_write(socket, boost::asio::buffer(toSend, toSend.size()),
-    boost::asio::transfer_all(),
-    boost::bind(
-        &Client::handleWrite,
-        this,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred
-    ));
+    send(toSend);
 }
 
 void Client::sendResponse(std::string_view response, const std::vector<uint8_t> &data)
@@ -141,14 +125,23 @@ void Client::sendResponse(std::string_view response, const std::vector<uint8_t> 
     std::cout << "Sending: " << data_.size() << std::endl;
     boost::system::error_code error;
 
-    boost::asio::async_write(socket, boost::asio::buffer(data_, data_.size()),
-    boost::asio::transfer_all(),
-    boost::bind(
-        &Client::handleWrite,
-        this,
-        boost::asio::placeholders::error,
-        boost::asio::placeholders::bytes_transferred
-    ));
+    send(data_);
+}
+
+void Client::send(const std::vector<uint8_t> &dataToSend)
+{
+    boost::asio::async_write(
+        socket,
+        boost::asio::buffer(dataToSend, dataToSend.size()),
+        boost::asio::transfer_all(),
+        [this](const boost::system::error_code &error, std::size_t byteSent){
+            if (!error)
+                std::cout << "Sent " << byteSent << " bytes" << '\n';
+            
+            else
+                std::cout << "ERROR while sending: " << error.message() << '\n';            
+        }
+    );
 }
 
 void Client::prepareFile(std::string_view filename)

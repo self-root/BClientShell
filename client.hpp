@@ -71,20 +71,14 @@ private:
      */
     void sendResponse(std::string_view response, const std::vector<uint8_t> &data);
 
+    void send(const std::vector<uint8_t> &dataToSend);
+
     /**
      * @brief Prepare file requested by the server
      * 
      * @param filename 
      */
     void prepareFile(std::string_view filename);
-
-    /**
-     * @brief A callback executed by the async write
-     * 
-     * @param error 
-     * @param byte_ 
-     */
-    void handleWrite(const boost::system::error_code &error, std::size_t byte_);
 
     /**
      * @brief execu

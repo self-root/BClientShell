@@ -1,8 +1,8 @@
 # -*- MakeFile -*-
 cpp := -std=c++2a
-
+# -lws2_32 (for windows)
 client: main.o client.o
-	g++ $(cpp) main.o client.o -o client -lpthread -lws2_32
+	g++ $(cpp) main.o client.o -o client -lpthread
 
 main.o: main.cpp
 	g++ $(cpp) -c main.cpp

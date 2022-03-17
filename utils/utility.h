@@ -48,6 +48,13 @@ public:
         return std::string(currDir);
     }
 
+    /**
+     * @brief Set the Currend Directory of the running program
+     * 
+     * @param dirName 
+     * 
+     * @exception DirNotFound Exception thrown if the path does not exist
+     */
     static void setCurrendDir(std::string_view dirName)
     {
         std::cout << "Changing dir to: " << dirName << std::endl;
@@ -57,12 +64,18 @@ public:
             throw DirNotFound();
     }
 
+    /**
+     * @brief Execute bash/batch command and simply return the result
+     * 
+     * @param command 
+     * @return std::string 
+     */
     static std::string excuteCommand(std::string_view command)
     {
         const int BUFFER_SIZE = 256;
         char buffer[BUFFER_SIZE];
         std::string output = "";
-        FILE *pipe = _popen(command.data(), "r");
+        FILE *pipe = popen(command.data(), "r");
 
         if (!pipe)
             return "Unknown error";
@@ -72,7 +85,7 @@ public:
                 output += buffer;
         }
 
-        _pclose(pipe);
+        pclose(pipe);
 
         return output;
     }
